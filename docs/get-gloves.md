@@ -6,6 +6,7 @@ sidebar: false
 prev: false
 next: false
 outline: false
+search: false
 ---
 
 # 获取机厅物品

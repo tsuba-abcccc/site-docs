@@ -7,6 +7,7 @@ sidebar: false
 prev: false
 next: false
 outline: false
+search: false
 ---
 
 # 2026 年 7 月金街舞萌机台维护众筹计划

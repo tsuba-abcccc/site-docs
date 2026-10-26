@@ -7,7 +7,7 @@
 
 [查看《高中物理学》的 PDF 版本](./note1.pdf)
 
-这也许不是最新的版本。可以前往 [我的 Github](https://github.com/aboci-abcccc/Physics-notes-of-ordinary-high-school/blob/master/%E9%AB%98%E4%B8%AD%E7%89%A9%E7%90%86%E5%AD%A6/%E9%AB%98%E4%B8%AD%E7%89%A9%E7%90%86%E5%AD%A6.pdf) 获取最新内容。
+这也许不是最新的版本。可以前往 [我的 Github](https://github.com/tsuba-abcccc/study-notes/blob/master/高中物理学/高中物理学.pdf) 获取最新内容。
 
 受限于服务器带宽，文件下载可能较慢。
 
@@ -20,4 +20,4 @@
 [查看 PDF 版本](./note2.pdf)
 
 ## 更多内容
-可以前往 [我的 Github](https://github.com/aboci-abcccc/Physics-notes-of-ordinary-high-school/tree/master) 获取有关高中学习笔记的内容。
+可以前往 [我的 Github](https://github.com/tsuba-abcccc/study-notes/tree/master) 获取有关高中学习笔记的内容。

@@ -1,56 +1,10 @@
 <script setup>
 import {
   ChevronRight,
-  Hand,
-  HeartHandshake,
-  ListOrdered,
+  Megaphone,
   MessageCircle,
-  ScrollText,
   Wrench
 } from '@lucide/vue'
-
-const services = [
-  {
-    key: 'queue',
-    title: '排队状态',
-    description: '查看现场各机台的实时排队状态',
-    href: '/queue-status',
-    icon: ListOrdered,
-    tone: 'blue'
-  },
-  {
-    key: 'items',
-    title: '共享物品',
-    description: '手套、耳机与清洁用品存放信息',
-    href: '/get-gloves',
-    icon: Hand,
-    tone: 'green'
-  },
-  {
-    key: 'rules',
-    title: '游玩规则',
-    description: '游玩须知、排卡规则与管理办法',
-    href: '/maimai-rules',
-    icon: ScrollText,
-    tone: 'orange'
-  },
-  {
-    key: 'crowdfunding',
-    title: '维护众筹',
-    description: '采购、维护安排与资金使用公示',
-    href: '/crowdfunding',
-    icon: Wrench,
-    tone: 'purple'
-  },
-  {
-    key: 'thanks',
-    title: '特别鸣谢',
-    description: '感谢参与维护、众筹与捐赠的玩家',
-    href: '/maimai-thanks',
-    icon: HeartHandshake,
-    tone: 'pink'
-  }
-]
 </script>
 
 <template>
@@ -58,28 +12,22 @@ const services = [
     <header class="maimai-home-header">
       <p>塘沽金街 · 舞萌 DX</p>
       <h1>金街舞萌公告板</h1>
-      <span>王者之风游乐体验中心（塘沽金街店）</span>
+      <span>王者之风游乐体验中心（塘沽金街店）已停止营业</span>
     </header>
 
-    <section class="maimai-service-section" aria-labelledby="maimai-service-title">
-      <h2 id="maimai-service-title">服务</h2>
-      <div class="maimai-service-list">
-        <a
-          v-for="service in services"
-          :key="service.key"
-          class="maimai-service-row"
-          :href="service.href"
-        >
-          <span class="maimai-service-icon" :class="`is-${service.tone}`" aria-hidden="true">
-            <component :is="service.icon" :size="22" :stroke-width="1.9" />
-          </span>
-          <span class="maimai-service-copy">
-            <strong>{{ service.title }}</strong>
-            <small>{{ service.description }}</small>
-          </span>
-          <ChevronRight class="maimai-service-chevron" :size="20" :stroke-width="2" aria-hidden="true" />
-        </a>
-      </div>
+    <section class="maimai-priority-notice" aria-labelledby="maimai-priority-notice-title">
+      <a href="/maimai-closure-notice">
+        <span class="maimai-notice-label">
+          <Megaphone :size="16" :stroke-width="2" aria-hidden="true" />
+          重要通知
+        </span>
+        <h2 id="maimai-priority-notice-title">关于金街王者之风已停止营业的后续安排</h2>
+        <p>塘沽金街店已于 2026 年 9 月 1 日正式停止营业</p>
+        <span class="maimai-notice-more">
+          查看机台迁移、众筹物品与剩余款项安排
+          <ChevronRight :size="18" :stroke-width="2" aria-hidden="true" />
+        </span>
+      </a>
     </section>
 
     <section class="maimai-contact-section" aria-labelledby="maimai-contact-title">
@@ -98,6 +46,6 @@ const services = [
       </div>
     </section>
 
-    <footer class="maimai-home-footer">玩家公益维护 · 信息仅供现场参考</footer>
+    <footer class="maimai-home-footer">机厅关闭后，相关服务将根据后续安排陆续停止 · 详见停业通知</footer>
   </main>
 </template>

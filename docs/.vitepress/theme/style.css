@@ -281,6 +281,69 @@ p {
     line-height: 1.5;
 }
 
+.maimai-priority-notice {
+    margin-bottom: 28px;
+}
+
+.maimai-priority-notice > a {
+    display: block;
+    padding: 16px;
+    border: 1px solid #ffd8a3;
+    border-radius: 8px;
+    color: var(--maimai-label);
+    background: #fff8ee;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.maimai-priority-notice > a:active {
+    background: #fff2df;
+}
+
+.maimai-notice-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #a85900;
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.3;
+}
+
+.maimai-priority-notice h2 {
+    margin: 9px 0 0;
+    padding: 0;
+    border: 0;
+    color: var(--maimai-label);
+    font-size: 19px;
+    font-weight: 650;
+    line-height: 1.4;
+    letter-spacing: 0;
+}
+
+.maimai-priority-notice p {
+    margin: 7px 0 0;
+    color: var(--maimai-secondary);
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.maimai-notice-more {
+    display: flex;
+    margin-top: 14px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    color: var(--maimai-blue);
+    font-size: 12px;
+    font-weight: 550;
+    line-height: 1.45;
+}
+
+.maimai-notice-more svg {
+    flex: 0 0 auto;
+}
+
 .maimai-service-section h2,
 .maimai-contact-section h2 {
     margin: 0 0 8px 4px;
@@ -288,6 +351,13 @@ p {
     color: var(--maimai-secondary);
     font-size: 13px;
     font-weight: 500;
+}
+
+.maimai-service-note {
+    margin: -2px 4px 10px;
+    color: var(--maimai-secondary);
+    font-size: 12px;
+    line-height: 1.5;
 }
 
 .maimai-service-list,
@@ -521,7 +591,7 @@ p {
     display: grid;
     width: 100%;
     margin: 0;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     gap: 4px;
     overflow: visible;
 }
@@ -555,6 +625,43 @@ p {
     margin-left: auto;
 }
 
+.queue-service-paused {
+    width: 100%;
+    max-width: 760px;
+    margin: 36px auto 0;
+    padding: 24px 20px;
+    border: 1px solid var(--maimai-line);
+    border-radius: 12px;
+    background: var(--maimai-surface);
+}
+
+.queue-service-paused-label {
+    margin: 0 0 8px;
+    color: var(--maimai-secondary);
+    font-size: 12px;
+}
+
+.queue-service-paused h1 {
+    margin: 0;
+    border: 0;
+    color: var(--maimai-label);
+    font-size: 24px;
+    line-height: 1.35;
+    letter-spacing: 0;
+}
+
+.queue-service-paused p:not(.queue-service-paused-label) {
+    margin: 12px 0 0;
+    color: var(--maimai-secondary);
+    font-size: 14px;
+    line-height: 1.75;
+}
+
+.queue-service-paused a {
+    color: var(--maimai-blue);
+    font-weight: 550;
+}
+
 .dark .maimai-board-page,
 .dark .get-gloves-page,
 .dark .maimai-queue-page {
@@ -568,6 +675,7 @@ p {
 
 .dark .maimai-service-list,
 .dark .maimai-contact-list,
+.dark .maimai-priority-notice > a,
 .dark .maimai-back,
 .dark .maimai-page-links a {
     border-color: rgba(255, 255, 255, 0.08);
@@ -576,6 +684,19 @@ p {
 .dark .maimai-back,
 .dark .maimai-page-links a {
     background: rgba(28, 28, 30, 0.94);
+}
+
+.dark .maimai-priority-notice > a {
+    border-color: #5a3a13;
+    background: #2f2417;
+}
+
+.dark .maimai-priority-notice > a:active {
+    background: #392918;
+}
+
+.dark .maimai-notice-label {
+    color: #ffb34d;
 }
 
 .dark .maimai-page-links a.active {
@@ -601,12 +722,14 @@ p {
     }
 
     .maimai-service-row:hover,
+    .maimai-priority-notice > a:hover,
     .maimai-contact-list a:hover {
         background: #f4f4f5;
         text-decoration: none;
     }
 
     .dark .maimai-service-row:hover,
+    .dark .maimai-priority-notice > a:hover,
     .dark .maimai-contact-list a:hover {
         background: #2c2c2e;
     }

@@ -13,7 +13,7 @@ import {
 } from '@lucide/vue'
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import MobileProfileSettings from './MobileProfileSettings.vue'
-import { normalizeMachineConfiguration } from './machineConfiguration.js'
+import { formatMiddleDots, normalizeMachineConfiguration } from './machineConfiguration.js'
 
 const props = defineProps({
   token: { type: String, required: true }
@@ -21,6 +21,8 @@ const props = defineProps({
 
 const QUEUE_API_URL = import.meta.env.VITE_QUEUE_STATUS_API_URL ||
   (typeof window !== 'undefined' ? `${window.location.origin}/api/queue-status` : '/api/queue-status')
+const PLAYER_ACCOUNT_API_URL = import.meta.env.VITE_PLAYER_ACCOUNT_API_URL ||
+  QUEUE_API_URL.replace(/queue-status\/?(?:\?.*)?$/, 'player-account')
 const MOBILE_API_BASE = import.meta.env.VITE_QUEUE_MOBILE_API_BASE ||
   QUEUE_API_URL.replace(/queue-status\/?(?:\?.*)?$/, 'queue-mobile/sessions')
 const PROFILE_COOKIE = 'maimai_q_mobile_profile'
@@ -92,6 +94,10 @@ const machineConfiguration = computed(() => normalizeMachineConfiguration(
   }
 ))
 
+const sessionMachineName = computed(() => formatMiddleDots(
+  String(session.value?.machine_name ?? session.value?.machineName ?? '当前机台')
+))
+
 const singlePlayerMachine = computed(() => machineConfiguration.value.capacity === 1)
 
 const needsCurrentPreference = computed(() => (
@@ -128,7 +134,7 @@ function createNewProfileDraft() {
     gender: 'UNDISCLOSED',
     default_preference: 'ASK_EVERY_TIME',
     qq_number: '',
-    qq_visibility: 'TERMINAL_ONLY',
+    qq_visibility: 'PUBLIC_WEBSITE',
     ...DEFAULT_NOTIFICATIONS
   }
 }
@@ -205,6 +211,10 @@ function normalizeProfile(source) {
   if (!source?.profile_id || !source?.nickname) return null
   return {
     profileId: source.profile_id,
+    publicPlayerId: source.public_player_id || null,
+    publicPlayerIdAliases: Array.isArray(source.public_player_id_aliases)
+      ? source.public_player_id_aliases.filter((value) => /^\d{6}$/.test(value))
+      : [],
     nickname: source.nickname,
     gender: source.gender || 'UNDISCLOSED',
     defaultPreference: source.default_preference,
@@ -237,9 +247,21 @@ async function initialize() {
     }
     const loaded = await loadProfiles('')
     if (!loaded) return
-    const rememberedProfile = profiles.value.find((profile) => (
-      profile.profileId === rememberedProfileId.value
-    ))
+    const accountProfile = await readLoggedInProfile()
+    if (accountProfile) {
+      const loggedInProfile = findLoggedInProfile(accountProfile)
+      if (loggedInProfile) {
+        selectProfile(loggedInProfile)
+        return
+      }
+      // The account may belong to another venue or the terminal has not
+      // received its latest profile sync. Do not infer identity from QQ or
+      // nickname; let the player explicitly choose a local profile instead.
+      errorDetail.value = '当前登录的玩家资料暂未出现在本机厅资料库，请重新登录或手动选择玩家资料。'
+    }
+    const rememberedProfile = accountProfile
+      ? null
+      : profiles.value.find((profile) => profile.profileId === rememberedProfileId.value)
     if (rememberedProfile) {
       selectProfile(rememberedProfile)
       return
@@ -255,6 +277,33 @@ async function initialize() {
       resultDetail.value = error?.message || '这次移动设备登记已经结束。'
     }
   }
+}
+
+async function readLoggedInProfile() {
+  try {
+    const payload = await requestJson(PLAYER_ACCOUNT_API_URL, {
+      credentials: 'include'
+    })
+    return payload?.account?.profile || null
+  } catch {
+    // A missing account is the normal anonymous path. An unavailable account
+    // endpoint must not prevent the QR registration flow from working.
+    return null
+  }
+}
+
+function findLoggedInProfile(accountProfile) {
+  const profileId = String(accountProfile?.profile_id || '')
+  const publicPlayerId = String(accountProfile?.public_player_id || '')
+  if (profileId) {
+    const exactProfile = profiles.value.find((profile) => profile.profileId === profileId)
+    if (exactProfile) return exactProfile
+  }
+  if (!/^\d{6}$/.test(publicPlayerId)) return null
+  return profiles.value.find((profile) => (
+    profile.publicPlayerId === publicPlayerId ||
+    profile.publicPlayerIdAliases.includes(publicPlayerId)
+  )) || null
 }
 
 async function loadProfiles(query) {
@@ -525,7 +574,7 @@ onBeforeUnmount(() => {
             <span aria-hidden="true"><Smartphone :size="22" /></span>
             <div>
               <h1>使用移动设备登记</h1>
-              <p v-if="session">{{ session.machine_name }}</p>
+              <p v-if="session">{{ sessionMachineName }}</p>
               <p v-else>连接现场排队终端</p>
             </div>
           </div>
@@ -559,7 +608,7 @@ onBeforeUnmount(() => {
           </section>
           <label class="mobile-search">
             <Search :size="18" aria-hidden="true" />
-            <input v-model="searchText" type="search" maxlength="32" autocomplete="off" placeholder="搜索昵称或 QQ 号" />
+            <input v-model="searchText" type="search" maxlength="32" autocomplete="off" placeholder="搜索昵称、QQ 号或玩家编号" />
             <RefreshCw v-if="searching" :size="16" class="is-spinning" aria-label="正在搜索" />
           </label>
           <p v-if="errorDetail" class="mobile-form-error" role="alert">{{ errorDetail }}</p>
@@ -568,7 +617,8 @@ onBeforeUnmount(() => {
               :class="{ 'is-remembered': profile.profileId === rememberedProfileId }" @click="selectProfile(profile)">
               <span v-if="profile.profileId === rememberedProfileId" class="mobile-profile-remembered">上次使用</span>
               <strong>{{ profile.nickname }}<em :class="`is-${profile.gender.toLowerCase()}`">{{ genderSymbol(profile.gender) }}</em></strong>
-              <small>{{ preferenceLabel(profile.defaultPreference) }}·{{ recentUsageText(profile) }}</small>
+              <small>{{ formatMiddleDots(`${preferenceLabel(profile.defaultPreference)}·${recentUsageText(profile)}`) }}</small>
+              <small v-if="profile.publicPlayerId">玩家编号：{{ profile.publicPlayerId }}</small>
               <small v-if="profile.qqNumber">QQ：{{ profile.qqNumber }}</small>
               <span v-if="!profile.setupComplete" class="mobile-profile-incomplete">需要补全资料</span>
             </button>
@@ -625,7 +675,8 @@ onBeforeUnmount(() => {
           <section class="mobile-confirmation">
             <dl>
               <div><dt>玩家昵称</dt><dd>{{ confirmationProfile.nickname }} {{ genderSymbol(confirmationProfile.gender) }}</dd></div>
-              <div><dt>排队机台</dt><dd>{{ session.machine_name }}</dd></div>
+              <div v-if="confirmationProfile.publicPlayerId"><dt>玩家编号</dt><dd>{{ confirmationProfile.publicPlayerId }}</dd></div>
+              <div><dt>排队机台</dt><dd>{{ sessionMachineName }}</dd></div>
               <div><dt>默认游玩偏好</dt><dd>{{ preferenceLabel(confirmationProfile.defaultPreference) }}</dd></div>
               <div v-if="draftMode === 'NEW'"><dt>QQ</dt><dd>{{ confirmationProfile.qqNumber }}</dd></div>
             </dl>

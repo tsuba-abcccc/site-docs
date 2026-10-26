@@ -81,7 +81,7 @@ export default defineConfig({
       next: "下一页",
     },
     editLink: {
-      pattern: "https://github.com/aboci-abcccc/site-docs/tree/main/docs/:path",
+      pattern: "https://github.com/tsuba-abcccc/site-docs/tree/main/docs/:path",
       text: "在 GitHub 上编辑此页",
     },
     sidebarMenuLabel: "菜单",
@@ -93,7 +93,7 @@ export default defineConfig({
     nav: [
       { text: "首页", link: "/" },
       { text: "更多", link: "/intro" },
-      { text: "GitHub", link: "https://github.com/aboci-abcccc" },
+      { text: "GitHub", link: "https://github.com/tsuba-abcccc" },
     ],
     darkModeSwitchLabel: "浅色 / 深色",
     lightModeSwitchTitle: "切换到浅色",

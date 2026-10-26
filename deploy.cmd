@@ -1,6 +1,6 @@
 @echo off
 setlocal
-set "REMOTE=root@abcccc.top"
+set "REMOTE=root@1.15.101.124"
 set "REMOTE_ROOT=/var/www/main"
 
 call pnpm docs:build || exit /b 1

@@ -7,6 +7,7 @@ sidebar: false
 prev: false
 next: false
 outline: false
+search: false
 ---
 
 # 特别鸣谢
