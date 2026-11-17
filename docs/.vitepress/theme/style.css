@@ -427,6 +427,7 @@ p {
 .maimai-service-icon.is-orange { background: #ff9500; }
 .maimai-service-icon.is-purple { background: #7654c6; }
 .maimai-service-icon.is-pink { background: #e34d73; }
+.maimai-service-icon.is-teal { background: #2a9d9a; }
 
 .maimai-service-copy,
 .maimai-contact-list a > span:nth-child(2) {
@@ -451,6 +452,20 @@ p {
     color: var(--maimai-secondary);
     font-size: 12px;
     line-height: 1.35;
+}
+
+.maimai-legacy-tag {
+    display: inline-block;
+    margin-left: 7px;
+    padding: 1px 6px;
+    border-radius: 5px;
+    color: var(--maimai-secondary);
+    background: var(--maimai-bg);
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 1.6;
+    vertical-align: 2px;
 }
 
 .maimai-service-chevron,
