@@ -226,7 +226,24 @@ docs/
 **要求**：推送。
 
 - 把 `main` 推送到了 GitHub（`origin/main`）。只推送了提交，没有推送 tag。
-- **截至本记录没有部署。** 部署由 tag 触发，方式见第一部分第 8 节；之后是否已上线，以仓库的 tag 和线上的 `.deploy-sha` 为准。
+- 当时还没有部署。
+
+### 第 8 轮：部署
+
+**要求**：打 tag 部署。
+
+打 tag 之前先确认了线上现状，结论是这次部署只会带上本次会话的改动：
+
+- 线上 `https://abcccc.top/hashmap.json` 与 `b85defd` 提交里的 `dist/hashmap.json` 完全一致，说明部署前线上就是 `b85defd` 的构建结果。
+- 线上没有 `/.deploy-sha`。这个文件只有 GitHub Actions 部署才会写入，所以 `b85defd` 是用 `deploy.cmd` 手动部署的。
+- 上一次经 GitHub Actions 部署是 2026-08-19 的 tag `queue-status-v0.12.2-final`（提交 `635c228`）。**`queue-status-v0.11` 到 `v0.12.2-final` 这批 tag 指向的提交不在 `main` 的历史里**，`main` 是从 `007049d` 直接接上 `b85defd` 的。逐文件比对后，`main` 的内容比 `635c228` 新（排队组件 0.13.4、停业通知、GitHub 地址修正等），没有发现 `main` 缺少的内容。
+- 自上次成功的 Actions 部署以来，`package.json`、`pnpm-lock.yaml`、`pnpm-workspace.yaml` 和工作流文件都没有变化。
+
+操作：
+
+- tag 命名沿用仓库里内容类更新的旧惯例 `push<月>.<日>`（已有 `push5.14`、`push7.15` 等），本次为附注 tag `push11.17`，指向本节所在的提交。`queue-status-v*` 是排队客户端发布用的，这次不是排队客户端更新，所以没有用。
+- 推送该 tag 触发 `Deploy VitePress` 工作流。工作流会顺带在 GitHub 上生成一个 `deploy-<运行号>-<次数>` 的 Release。
+- 运行结果以 GitHub Actions 记录为准；成功后线上 `/.deploy-sha` 的内容应等于 `push11.17` 指向的提交号。
 
 ---
 
@@ -237,6 +254,6 @@ docs/
 3. **`dist` 被部分跟踪。** `docs/.vitepress/dist/` 下有一批文件被 git 跟踪（几个页面、头像图片、字体等）。每次本地构建都会让其中 7 个显示为已修改：`404.html`、`index.html`、`intro.html`、`notes.html`、`passage.html`、`get-gloves.html`、`hashmap.json`。以往的提交里带过这类文件。不想带上时，提交前执行 `git checkout -- docs/.vitepress/dist` 还原。
 4. **本地环境。** 本次在仓库里执行过 `pnpm install --frozen-lockfile`，生成了 `node_modules/`（已被忽略）。仓库所在磁盘是 exFAT，安装约需两分钟。
 5. **排队组件不要在本仓库里直接改。** 它们的源头在 `maimai-queue-terminal/public-site/src/queue/`，在本仓库改了会被下次同步覆盖。
-6. **部署由 tag 触发。** 推送提交不会部署，推送 tag 才会。
+6. **部署由 tag 触发。** 推送提交不会部署，推送 tag 才会。本机的仓库远程地址是 HTTPS 且没有保存凭据，直接 `git push` 会报错；本次用的是一次性改写为 SSH 的方式：`git -c url."git@github.com:".insteadOf="https://github.com/" push origin <分支或 tag>`。
 7. **旧页面只在入口处做了标注。** 6 个旧页面的正文里没有“本页已不再更新”之类的提示，如需要可在各页标题下加一个提示块。
 8. **未处理事项**见第二部分第 6 到 10 项。
