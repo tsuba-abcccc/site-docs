@@ -11,7 +11,7 @@ export const Footer_Data: FooterData = {
   author: {
     startYear: 2026,
     name: '_abcccc',
-    link: 'https://github.com/aboci-abcccc',
+    link: 'https://github.com/tsuba-abcccc',
     rel: 'noopener noreferrer',
     text: 'All Rights Reserved.'
   }
