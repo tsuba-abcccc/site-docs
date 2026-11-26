@@ -37,3 +37,6 @@ pnpm-debug.log*
 
 # 系统文件
 Thumbs.db
+
+# 本地交接记录（只留在本机，不进版本库）
+/HANDOVER.md
